@@ -15,17 +15,34 @@ const TaskCollections: React.FC<{setCollections: React.Dispatch<React.SetStateAc
   if (localData) {
     initialCollections= JSON.parse(localData)
   } else {
-    
+    //To be transferred to MongoDB
     initialCollections =  [
       {
         id: 0,
         name: '5 minutes',
-        tasks: [{name: 'Full body stretch', id: idGenerator()}]
+        tasks: [
+          {name: 'Full body stretch', id: idGenerator()},
+          {name: 'Clean out your desk', id: idGenerator()},
+          {name: 'Hydrate and get some fresh air', id: idGenerator()}
+        ]
       },
       {
         id: 1,
         name: '15 minutes',
-        tasks: [{name: 'Go for a walk', id: idGenerator()}]
+        tasks: [
+          {name: 'Go for a walk', id: idGenerator()},
+          {name: 'Journal', id: idGenerator()},
+          {name: 'Work on your emails', id: idGenerator()}
+        ]
+      },
+      {
+        id: 2,
+        name: '30 minutes',
+        tasks: [
+          {name: 'Take a power nap', id: idGenerator()},
+          {name: 'Read a few chapters of a book', id: idGenerator()},
+          {name: 'Meditate', id: idGenerator()}
+        ]
       }
     ]
   }

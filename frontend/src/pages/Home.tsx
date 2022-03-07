@@ -18,6 +18,7 @@ export default function Home() {
   const [chosenCollection, setChosenCollection] = useState<string>('')
   const [hidden, setHidden] = useState<Boolean>(true)
   const [edit, setEdit] = useState<boolean>(false);
+  const [firstLoad, setFirstLoad] = useState<boolean>(true);
 
   const inputRef = useRef<HTMLInputElement | null>(null);
 
@@ -28,6 +29,7 @@ export default function Home() {
     setChosenTask(nonEmptyCollections[randomCollection].tasks[randomTask]) 
     setChosenCollection(nonEmptyCollections[randomCollection].name)
     setHidden(true)
+    setFirstLoad(false)
   } 
 
   useEffect(() => {
@@ -78,8 +80,11 @@ export default function Home() {
       <span className="greetings__main">Hi, {userName.split(" ", 1)}</span>
       <span className="greetings__subtitle">Ready to do some work?</span> 
     </div>
-    <div className={hidden? "finder__full-page" : "finder" }>
-      <h1 className="finder__name">{chosenTask.name}</h1>
+    <div className={hidden? `${firstLoad? "finder__first-load": "finder__full-page"}` : "finder"}>
+      {firstLoad? 
+        <h1 className="finder__name">Lost, overwhelmed, or just... bored?</h1> :  
+        <h1 className="finder__name">{chosenTask.name}</h1>
+      }
       <span className="finder__collection">{chosenCollection}</span>
       <button className="finder__search-button" onClick={fetchTask}>
         Find a task
