@@ -22,14 +22,9 @@ const addTask = asyncHandler(async (req, res) => {
 
     const task = await Task.create({
         name: req.body.name,
-        description: req.body.description,
-        duration: req.body.duration,
-        upvotes: 0,
         tags: [req.body.tags]
     })
-
-    // const addTag = await 
-
+    
     res.status(200).json(task)
 })
 

@@ -15,11 +15,8 @@ app.use(express.urlencoded({ extended: false }));
 app.use('/api/tasks', require('./routes/taskRouter'))
 app.use('/api/tags', require('./routes/tagRouter'))
 app.use('/api/user', require('./routes/userRouter'))
-
-// app.get('/', (req, res) => {
-//     res.send("Hello world")
-// })
+app.use('/api/collections', require('./routes/collectionRouter'))
 
 app.listen(PORT, () => {
-    console.log("I'm listening bitch")
+    console.log("I'm listening.")
 })

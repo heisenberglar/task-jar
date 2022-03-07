@@ -1,18 +1,18 @@
 const mongoose = require('mongoose')
 
-const taskSchema = mongoose.Schema(
+const collectionSchema = mongoose.Schema(
     {
         name: {
             type: String,
             require: true
         },
-        tags: [
+        tasks: [
             {
                 type: mongoose.Schema.Types.ObjectId,
-                ref: "Tag"
+                ref: "Task"
             }
         ]
     }
 )
 
-module.exports = mongoose.model('Task', taskSchema)
+module.exports = mongoose.model('Collection', collectionSchema)
