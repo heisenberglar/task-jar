@@ -273,6 +273,11 @@ body {
     border-radius: 3px;
 }
 
+.tasks__collection-item:hover {
+  background-color: #476de9;
+  color: white;
+}
+
 .dragActive {
     transform: scale(1.01);
     background-color: #476de9;
