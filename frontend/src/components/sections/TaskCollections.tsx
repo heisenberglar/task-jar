@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, useReducer } from 'react';
+import { useEffect, useState, useRef, useReducer } from 'react';
 import {Task, Collection, Action} from '../../types/types'
 import '../../pages/styles.css'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -7,16 +7,16 @@ import {DragDropContext, Droppable, Draggable, DropResult} from 'react-beautiful
 import {idGenerator} from '../../lib/utils'
 import TaskCollectionsHeader from './TaskCollectionsHeader'
 
-const TaskCollections: React.FC<{setCollections: React.Dispatch<React.SetStateAction<Collection[]>>}> = ({setCollections}) => {
+const TaskCollections: React.FC<{setCollections: React.Dispatch<React.SetStateAction<Collection[]>>, hidden: Boolean}> = ({setCollections, hidden}) => {
 
   const localData = localStorage.getItem('collections')
-  let initialCollections: Collection[] = [];
+  let starterCollections: Collection[] = [];
 
   if (localData) {
-    initialCollections= JSON.parse(localData)
+    starterCollections= JSON.parse(localData)
   } else {
     //To be transferred to MongoDB
-    initialCollections =  [
+    starterCollections =  [
       {
         id: 0,
         name: '5 minutes',
@@ -121,7 +121,7 @@ const TaskCollections: React.FC<{setCollections: React.Dispatch<React.SetStateAc
       default:
         return state;
     }
-  }, initialCollections);
+  }, starterCollections);
 
   const inputRef = useRef<HTMLInputElement | null>(null);
 
@@ -178,8 +178,6 @@ const TaskCollections: React.FC<{setCollections: React.Dispatch<React.SetStateAc
     }
   }
 
-
-
   useEffect(() => {
     setCollections(collections)
     const updatedCollections = JSON.stringify(collections)
@@ -193,7 +191,7 @@ const TaskCollections: React.FC<{setCollections: React.Dispatch<React.SetStateAc
   }, [edit]);
 
   return ( 
-    <div className="tasks__board">
+    <div className={hidden? "hidden": "tasks tasks__board"}>
         <div className="tasks__collections">
           <DragDropContext onDragEnd={onDragEnd}>
             <TaskCollectionsHeader dispatch={dispatch}/>
@@ -216,7 +214,6 @@ const TaskCollections: React.FC<{setCollections: React.Dispatch<React.SetStateAc
                         })}
                       />
                     </span>
-                    
                     {collection.tasks.map((task, index) => {
                       return <Draggable 
                         draggableId={task.id.toString()} 
@@ -269,16 +266,13 @@ const TaskCollections: React.FC<{setCollections: React.Dispatch<React.SetStateAc
                             />
                           </div>
                         )}
-                        
                       </Draggable>
                     })}
                     {provided.placeholder}  
                   </div>
                 )}
               </Droppable>
-            }  
-            )}
-            
+            })}
           </DragDropContext>
         </div>
         <form 
