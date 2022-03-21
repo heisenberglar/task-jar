@@ -164,8 +164,8 @@ const TaskCollections: React.FC<{setCollections: React.Dispatch<React.SetStateAc
         })
       }
     } else {
-      const sourceCollectionCopy = collections.find(collection => collection.id == sourceId)
-      const destinationCollectionCopy = collections.find(collection => collection.id == destinationId)
+      const sourceCollectionCopy = collections.find(collection => collection.id === sourceId)
+      const destinationCollectionCopy = collections.find(collection => collection.id === destinationId)
       
       const jumper = sourceCollectionCopy!.tasks[source.index]
       sourceCollectionCopy!.tasks.splice(source.index, 1)
@@ -179,11 +179,12 @@ const TaskCollections: React.FC<{setCollections: React.Dispatch<React.SetStateAc
     }
   }
 
+  let updatedCollections = JSON.stringify(collections) 
+
   useEffect(() => {
     setCollections(collections)
-    const updatedCollections = JSON.stringify(collections)
     localStorage.setItem('collections', updatedCollections)
-  }, [JSON.stringify(collections)])
+  }, [updatedCollections])
   
   const [edit, setEdit] = useState<number>(0);
 
