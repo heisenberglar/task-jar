@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef, useReducer } from 'react';
+import React, { useEffect, useState, useRef, useReducer } from 'react';
 import {Task, Collection, Action} from '../../types/types'
 import '../../pages/styles.css'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -8,7 +8,7 @@ import {idGenerator} from '../../lib/utils'
 import TaskCollectionsHeader from './TaskCollectionsHeader'
 import TaskInput from './TaskInput'
 
-const TaskCollections: React.FC<{setCollections: React.Dispatch<React.SetStateAction<Collection[]>>, hidden: Boolean}> = ({setCollections, hidden}) => {
+const TaskCollections: React.FC<{setAvailableCollections: React.Dispatch<React.SetStateAction<Collection[]>>, hidden: Boolean}> = ({setAvailableCollections, hidden}) => {
 
   const localData = localStorage.getItem('collections')
   let starterCollections: Collection[] = [];
@@ -179,12 +179,12 @@ const TaskCollections: React.FC<{setCollections: React.Dispatch<React.SetStateAc
     }
   }
 
-  let updatedCollections = JSON.stringify(collections) 
-
   useEffect(() => {
-    setCollections(collections)
-    localStorage.setItem('collections', updatedCollections)
-  }, [updatedCollections])
+    setAvailableCollections(collections)
+    const stringifiedCollections = JSON.stringify(collections)
+    localStorage.setItem('collections', stringifiedCollections)
+    // eslint-disable-next-line
+  }, [collections])
   
   const [edit, setEdit] = useState<number>(0);
 
@@ -282,4 +282,4 @@ const TaskCollections: React.FC<{setCollections: React.Dispatch<React.SetStateAc
     )
   }
 
-  export default TaskCollections
+  export default React.memo(TaskCollections)

@@ -11,7 +11,7 @@ export default function Home() {
   let initialUserName: string= localUser? JSON.parse(localUser): "Stranger";
 
   const [userName, setUserName] = useState<string>(initialUserName);
-  const [collections, setCollections] = useState<Collection []>([]);
+  const [availableCollections, setAvailableCollections] = useState<Collection []>([]);
   const [hidden, setHidden] = useState<Boolean>(true);
 
   useEffect(() => {
@@ -22,7 +22,7 @@ export default function Home() {
   return <div className="home"> 
     <Sidebar hidden={hidden} userName={userName} setUserName={setUserName}/>
     <Greetings hidden={hidden} userName={userName} />
-    <Finder hidden={hidden} setHidden={setHidden} collections={collections}/>
-    <TaskCollections setCollections={setCollections} hidden={hidden}/>
+    <Finder hidden={hidden} setHidden={setHidden} collections={availableCollections}/>
+    <TaskCollections setAvailableCollections={setAvailableCollections} hidden={hidden}/>
   </div>
 } 
