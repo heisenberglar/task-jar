@@ -6,6 +6,7 @@ import { faCircleMinus, faTrash } from '@fortawesome/free-solid-svg-icons'
 import {DragDropContext, Droppable, Draggable, DropResult} from 'react-beautiful-dnd'
 import {idGenerator} from '../../lib/utils'
 import TaskCollectionsHeader from './TaskCollectionsHeader'
+import TaskInput from './TaskInput'
 
 const TaskCollections: React.FC<{setCollections: React.Dispatch<React.SetStateAction<Collection[]>>, hidden: Boolean}> = ({setCollections, hidden}) => {
 
@@ -275,17 +276,7 @@ const TaskCollections: React.FC<{setCollections: React.Dispatch<React.SetStateAc
             })}
           </DragDropContext>
         </div>
-        <form 
-          className="tasks__collection-item-form" 
-          onSubmit={handleSubmit}
-        >
-          <input 
-            type="text" 
-            className="tasks__collection-item-form-input" 
-            ref={inputRef}
-            placeholder="Add a new task"
-          />
-        </form>
+        <TaskInput handleSubmit={handleSubmit} inputRef={inputRef}/>
       </div>
     )
   }

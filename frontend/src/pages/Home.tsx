@@ -7,16 +7,16 @@ import './styles.css'
 import TaskCollections from '../components/sections/TaskCollections'
 
 export default function Home() {
-  const localUser = localStorage.getItem('user')
-  let initialUserName: string = localUser? JSON.parse(localUser): "Stranger";
+  const localUser = localStorage.getItem('user');
+  let initialUserName: string= localUser? JSON.parse(localUser): "Stranger";
 
-  const [userName, setUserName] = useState<string>(initialUserName)
-  const [collections, setCollections] = useState<Collection[]>([])
-  const [hidden, setHidden] = useState<Boolean>(true)
+  const [userName, setUserName] = useState<string>(initialUserName);
+  const [collections, setCollections] = useState<Collection []>([]);
+  const [hidden, setHidden] = useState<Boolean>(true);
 
   useEffect(() => {
-    const updatedUser = JSON.stringify(userName)
-    localStorage.setItem('user', updatedUser)
+    const updatedUser = JSON.stringify(userName);
+    localStorage.setItem('user', updatedUser);
   }, [userName]);
 
   return <div className="home"> 

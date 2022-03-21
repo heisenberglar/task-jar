@@ -25,10 +25,11 @@ const Finder: React.FC<{
 
     return (
         <div className={hidden? `${firstLoad? "finder__first-load": "finder__full-page"}` : "finder"}>
-            {firstLoad? 
-                <h1 className="finder__name">Lost, overwhelmed, or just... bored?</h1> :  
-                <h1 className="finder__name">{foundTask.name}</h1>
-            }
+            <h1 className="finder__name">
+                {
+                    firstLoad ? "Lost, overwhelmed, or just... bored?" : foundTask.name
+                } 
+            </h1> 
             <span className="finder__collection">{foundCollection}</span>
             <button className="finder__search-button" onClick={fetchTask}>
                 Find a task
