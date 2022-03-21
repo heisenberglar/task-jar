@@ -10,9 +10,7 @@ jobs:
         node-version: [10.x, 12.x, 14.x, 15.x]
     steps:
       - uses: actions/checkout@v2
-          working-directory: ./frontend
       - uses: actions/setup-node@v2
-          working-directory: ./frontend
           with:
             node-version: ${{ matrix.node }}
       - name: Run build then tests
