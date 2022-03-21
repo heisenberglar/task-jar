@@ -1,11 +1,9 @@
 const express = require('express')
 const router = express.Router()
 const {
-  getCollections,
-  addCollection
+  getCollections
 } = require('../controllers/collectionController')
 
-router.route('/starter').get(getCollections)
-router.route('/').post(addCollection)
+router.route('/').get(getCollections)
 
 module.exports = router

@@ -4,10 +4,8 @@ const {
   getTasks,
   addTask,
   getOneTask,
-  // updateTask,
-  // deleteTask,
 } = require('../controllers/taskController')
-const { requireAuth } = require('../middleware/authMiddleware')
+// const { requireAuth } = require('../middleware/authMiddleware')
 
 router.route('/all').get(getTasks)
 router.route('/').get(getOneTask).post(addTask)

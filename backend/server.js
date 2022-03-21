@@ -16,6 +16,7 @@ app.use('/api/tasks', require('./routes/taskRouter'))
 app.use('/api/tags', require('./routes/tagRouter'))
 app.use('/api/user', require('./routes/userRouter'))
 app.use('/api/collections', require('./routes/collectionRouter'))
+app.use('/api/projects', require('./routes/projectRouter'))
 
 app.listen(PORT, () => {
     console.log("I'm listening.")

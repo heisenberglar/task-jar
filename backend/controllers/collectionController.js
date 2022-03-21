@@ -1,5 +1,4 @@
 const asyncHandler = require('express-async-handler')
-
 const Collection = require('../models/collectionModel.js')
 
 const getCollections = asyncHandler(async (req, res) => {

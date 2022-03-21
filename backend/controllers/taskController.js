@@ -28,7 +28,6 @@ const addTask = asyncHandler(async (req, res) => {
     res.status(200).json(task)
 })
 
-
 module.exports = {
     getTasks,
     addTask,
