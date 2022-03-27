@@ -1,6 +1,7 @@
+
 const mongoose = require('mongoose')
 
-const collectionSchema = mongoose.Schema([
+const collectionSchema = mongoose.Schema(
     {
         name: {
             type: String,
@@ -13,6 +14,6 @@ const collectionSchema = mongoose.Schema([
             }
         ]
     }
-])
+)
 
 module.exports = mongoose.model('Collection', collectionSchema)

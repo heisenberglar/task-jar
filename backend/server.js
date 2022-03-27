@@ -1,23 +1,77 @@
 const express = require('express')
 const dotenv = require('dotenv').config()
 const PORT = process.env.PORT
+const path = require('path')
 const connectDB = require('./config/db')
 const cors = require('cors');
+const { makeExecutableSchema } = require('@graphql-tools/schema')
+const { ApolloServer, gql } = require('apollo-server-express');
+const Task = require('./models/taskModel')
+const Project = require('./models/projectModel')
+const Collection = require('./models/collectionModel')
 
 connectDB()
 
-const app = express();
+const startApolloServer = async () => {
+    const app = express();
+    app.use(cors())
 
-app.use(cors())
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+    const typeDefs = gql`
+        type Query {
+            tasks: [Task]
+            collections: [Collection]
+            projects: [Project]
+        }
 
-app.use('/api/tasks', require('./routes/taskRouter'))
-app.use('/api/tags', require('./routes/tagRouter'))
-app.use('/api/user', require('./routes/userRouter'))
-app.use('/api/collections', require('./routes/collectionRouter'))
-app.use('/api/projects', require('./routes/projectRouter'))
+        type Task {
+            name: String
+        }
+        
+        type Collection {
+            name: String,
+            tasks: [Task]
+        }
+        
+        type Project {
+            name: String,
+            collections: [Collection]
+        }
+    `
 
-app.listen(PORT, () => {
-    console.log("I'm listening.")
-})
+    const resolvers = {
+        Query: {
+            tasks: async () => {
+                const tasks = await Task.find()
+                return tasks
+            },
+            collections: async () => {
+                const collections = await Collection.find().populate('tasks')
+                return collections
+            },
+            projects: async () => {
+                const projects = await Project.find().populate({
+                    path: 'collections',
+                    populate: {
+                        path: 'tasks'
+                    }
+                })
+                return projects
+            }
+        }
+    }
+
+    const schema = makeExecutableSchema({
+        typeDefs,
+        resolvers
+    })
+
+    const server = new ApolloServer({schema});
+    await server.start();
+    server.applyMiddleware({ app });
+
+    app.listen(PORT, () => {
+        console.log(`🚀 Server ready at http://localhost:${PORT}${server.graphqlPath}`);
+    })
+}
+
+startApolloServer()
