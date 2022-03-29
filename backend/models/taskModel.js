@@ -5,13 +5,7 @@ const taskSchema = mongoose.Schema(
         name: {
             type: String,
             require: true
-        },
-        tags: [
-            {
-                type: mongoose.Schema.Types.ObjectId,
-                ref: "Tag"
-            }
-        ]
+        }
     }
 )
 
