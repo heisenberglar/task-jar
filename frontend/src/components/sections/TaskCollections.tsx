@@ -7,52 +7,87 @@ import {DragDropContext, Droppable, Draggable, DropResult} from 'react-beautiful
 import {idGenerator} from '../../lib/utils'
 import TaskCollectionsHeader from './TaskCollectionsHeader'
 import TaskInput from './TaskInput'
+import {useQuery, gql} from '@apollo/client'
 
 const TaskCollections: React.FC<{setAvailableCollections: React.Dispatch<React.SetStateAction<Collection[]>>, hidden: Boolean}> = ({setAvailableCollections, hidden}) => {
+  const GET_STARTER_PROJECT = gql`
+    query getProjectById($_id: ID!) {
+      projectsById(_id: $_id) {
+        collections {
+          _id
+          name
+          tasks {
+            _id
+            name
+          }
+        }
+      }
+    }
+  `;
+
+  const { loading, error, data } = useQuery(GET_STARTER_PROJECT, {
+    variables: {
+      _id: "62387a669408cdc2eee5680e"
+    }
+  });
+  
 
   const localData = localStorage.getItem('collections')
   let starterCollections: Collection[] = [];
 
+
   if (localData) {
     starterCollections= JSON.parse(localData)
   } else {
+    if (!loading && data) {
+      starterCollections = data.projectsById.collections
+    }
+   
     //To be transferred to MongoDB
-    starterCollections =  [
-      {
-        id: 0,
-        name: '5 minutes',
-        tasks: [
-          {name: 'Full body stretch', id: idGenerator()},
-          {name: 'Clean out your desk', id: idGenerator()},
-          {name: 'Hydrate and get some fresh air', id: idGenerator()}
-        ]
-      },
-      {
-        id: 1,
-        name: '15 minutes',
-        tasks: [
-          {name: 'Go for a walk', id: idGenerator()},
-          {name: 'Journal', id: idGenerator()},
-          {name: 'Work on your emails', id: idGenerator()}
-        ]
-      },
-      {
-        id: 2,
-        name: '30 minutes',
-        tasks: [
-          {name: 'Take a power nap', id: idGenerator()},
-          {name: 'Read a few chapters of a book', id: idGenerator()},
-          {name: 'Meditate', id: idGenerator()}
-        ]
-      }
-    ]
+  
+    // starterCollections =  data.projectsById.collections
+    // if (data) {
+    //   console.log(data)
+    // }
+
+    
+    // console.log(starterCollections)
+    // [
+    //   {
+    //     id: 0,
+    //     name: '5 minutes',
+    //     tasks: [
+    //       {name: 'Full body stretch', id: idGenerator()},
+    //       {name: 'Clean out your desk', id: idGenerator()},
+    //       {name: 'Hydrate and get some fresh air', id: idGenerator()}
+    //     ]
+    //   },
+    //   {
+    //     id: 1,
+    //     name: '15 minutes',
+    //     tasks: [
+    //       {name: 'Go for a walk', id: idGenerator()},
+    //       {name: 'Journal', id: idGenerator()},
+    //       {name: 'Work on your emails', id: idGenerator()}
+    //     ]
+    //   },
+    //   {
+    //     id: 2,
+    //     name: '30 minutes',
+    //     tasks: [
+    //       {name: 'Take a power nap', id: idGenerator()},
+    //       {name: 'Read a few chapters of a book', id: idGenerator()},
+    //       {name: 'Meditate', id: idGenerator()}
+    //     ]
+    //   }
+    // ]
   }
 
   const [collections, dispatch] = useReducer((state: Collection[], action: Action) => {
     switch (action.type) {
       case 'reorder':
         return state.map((collection) => {
-          if (collection.id === action.collection) {
+          if (collection._id === action.collection) {
             return action.updatedCollection!
           }
         return collection;
@@ -62,13 +97,13 @@ const TaskCollections: React.FC<{setAvailableCollections: React.Dispatch<React.S
           return state;
         }
 
-        if (!state.some(collection => collection.id === action.collection)) {
-         action.collection = state[0].id
+        if (!state.some(collection => collection._id === action.collection)) {
+         action.collection = state[0]._id
         } 
 
         const newTask: Task = {name: action.name, id: idGenerator()}
         return state.map((collection) => {
-          if (collection.id === action.collection) {
+          if (collection._id === action.collection) {
             return {
               ...collection,
               tasks: [...collection.tasks, newTask]
@@ -81,9 +116,9 @@ const TaskCollections: React.FC<{setAvailableCollections: React.Dispatch<React.S
           return state;
         }
         return state.map((collection) => {
-          if (collection.id === action.collection) {
+          if (collection._id === action.collection) {
             collection.tasks.map(task => {
-              if (task.id === action.task) {
+              if (task._id === action.task) {
                 task.name = action.name!
               } 
               return task
@@ -93,10 +128,10 @@ const TaskCollections: React.FC<{setAvailableCollections: React.Dispatch<React.S
       );
       case 'delete':
         return state.map((collection) => {
-          if (collection.id === action.collection) {
+          if (collection._id === action.collection) {
             return {
               ...collection,
-              tasks: collection.tasks.filter(task => task.id !== action.task)
+              tasks: collection.tasks.filter(task => task._id !== action.task)
             }
           }
         return collection;
@@ -109,16 +144,16 @@ const TaskCollections: React.FC<{setAvailableCollections: React.Dispatch<React.S
         return [...state, newCollection];
       case 'jump':
         return state.map((collection) => {
-          if (collection.id === action.updatedSource!.id) {
+          if (collection._id === action.updatedSource!._id) {
             return action.updatedSource!
           } 
-          if (collection.id === action.updatedDestination!.id) {
+          if (collection._id === action.updatedDestination!._id) {
             return action.updatedDestination!
           }
         return collection;
       });
       case 'deleteCollection':
-        return state.filter(collection => collection.id !== action.collection);
+        return state.filter(collection => collection._id !== action.collection);
       default:
         return state;
     }
@@ -149,7 +184,7 @@ const TaskCollections: React.FC<{setAvailableCollections: React.Dispatch<React.S
     const destinationId = parseInt(destination.droppableId);
 
     if (sourceId === destinationId) {
-      const changedCollection = collections.find((collection: Collection) => collection.id === destinationId)
+      const changedCollection = collections.find((collection: Collection) => collection._id === destinationId)
 
       if (changedCollection) {
         const newCollectionTasks = [...changedCollection.tasks]
@@ -159,13 +194,13 @@ const TaskCollections: React.FC<{setAvailableCollections: React.Dispatch<React.S
 
         dispatch({
           type: 'reorder',
-          collection: changedCollection.id,
+          collection: changedCollection._id,
           updatedCollection: changedCollection
         })
       }
     } else {
-      const sourceCollectionCopy = collections.find(collection => collection.id === sourceId)
-      const destinationCollectionCopy = collections.find(collection => collection.id === destinationId)
+      const sourceCollectionCopy = collections.find(collection => collection._id === sourceId)
+      const destinationCollectionCopy = collections.find(collection => collection._id === destinationId)
       
       const jumper = sourceCollectionCopy!.tasks[source.index]
       sourceCollectionCopy!.tasks.splice(source.index, 1)
@@ -198,7 +233,7 @@ const TaskCollections: React.FC<{setAvailableCollections: React.Dispatch<React.S
           <DragDropContext onDragEnd={onDragEnd}>
             <TaskCollectionsHeader dispatch={dispatch}/>
               {collections.map((collection: Collection) => {
-                return <Droppable droppableId={JSON.stringify(collection.id)} key={collection.id}>
+                return <Droppable droppableId={JSON.stringify(collection._id)} key={collection._id}>
                 {(provided) => (  
                   <div
                     ref={provided.innerRef}
@@ -212,14 +247,14 @@ const TaskCollections: React.FC<{setAvailableCollections: React.Dispatch<React.S
                         className="tasks__collection-delete-icon" 
                         onClick={() => dispatch({
                           type: 'deleteCollection',
-                          collection: collection.id,
+                          collection: collection._id,
                         })}
                       />
                     </span>
                     {collection.tasks.map((task, index) => {
                       return <Draggable 
-                        draggableId={task.id.toString()} 
-                        key={task.id}
+                        draggableId={task._id.toString()} 
+                        key={task._id}
                         index={index}
                       >
                         {(provided, snapshot) => (
@@ -229,15 +264,15 @@ const TaskCollections: React.FC<{setAvailableCollections: React.Dispatch<React.S
                             {...provided.dragHandleProps}
                             className={`tasks__collection-item ${snapshot.isDragging? 'dragActive': ''}`}
                           >
-                            {edit === task.id? 
+                            {edit === task._id? 
                               <form 
                                 className="tasks__collection-item-form" 
                                 onSubmit={() => {
                                   dispatch({
                                     type: 'edit',
                                     name: inputRef.current!.value,
-                                    collection: collection.id,
-                                    task: task.id
+                                    collection: collection._id,
+                                    task: task._id
                                   })
                                   setEdit(0)
                                 }}
@@ -251,7 +286,7 @@ const TaskCollections: React.FC<{setAvailableCollections: React.Dispatch<React.S
                                 />
                               </form>
                               : <span onDoubleClick={() => 
-                                setEdit(task.id)
+                                setEdit(task._id)
                               }>
                                 {task.name}
                               </span>
@@ -262,8 +297,8 @@ const TaskCollections: React.FC<{setAvailableCollections: React.Dispatch<React.S
                               className="tasks__collection-item-delete-icon" 
                               onClick={() => dispatch({
                                 type: 'delete',
-                                collection: collection.id,
-                                task: task.id
+                                collection: collection._id,
+                                task: task._id
                               })}
                             />
                           </div>
